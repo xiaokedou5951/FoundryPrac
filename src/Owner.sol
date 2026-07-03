@@ -1,0 +1,32 @@
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.30;
+
+contract Owner {
+    address public owner;
+    uint8 public x;
+    address public owner2;
+    uint public y;
+    address public owner3;
+    
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    // indexed -> topic
+    // data
+    event OwnerTransfer(address indexed caller, address indexed newOwner);
+
+    function transferOwnership(address newOwner) public {
+        require(msg.sender == owner, "Only the owner can transfer ownership");
+        owner = newOwner;
+        emit OwnerTransfer(msg.sender, newOwner);
+    }
+
+    error NotOwner(address caller);
+
+    function transferOwnership2(address newOwner) public {
+        if (msg.sender != owner) revert NotOwner(msg.sender);
+        owner = newOwner;
+    }
+}
