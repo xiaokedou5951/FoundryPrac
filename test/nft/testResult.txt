@@ -1,0 +1,53 @@
+---------------------测试上架NFT成功的情况---------------------
+MacdeMacBook-Pro:FoundryPrac mac$ forge test test/nft/NFTMarket.t.sol --mt testListNFTSuccess -vvv
+[⠊] Compiling...
+No files changed, compilation skipped
+
+Ran 1 test for test/nft/NFTMarket.t.sol:NFTMarketTest
+[PASS] testListNFTSuccess() (gas: 171048)
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 1.37ms (231.01µs CPU time)
+
+Ran 1 test suite in 2.77s (1.37ms CPU time): 1 tests passed, 0 failed, 0 skipped (1 total tests)
+
+---------------------运行该测试文件全部用例---------------------
+MacdeMacBook-Pro:FoundryPrac mac$ forge test test/nft/NFTMarket.t.sol --mt testListNFTSuccess -vvv
+[⠊] Compiling...
+No files changed, compilation skipped
+
+Ran 1 test for test/nft/NFTMarket.t.sol:NFTMarketTest
+[PASS] testListNFTSuccess() (gas: 171048)
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 1.37ms (231.01µs CPU time)
+
+Ran 1 test suite in 2.77s (1.37ms CPU time): 1 tests passed, 0 failed, 0 skipped (1 total tests)
+MacdeMacBook-Pro:FoundryPrac mac$ 
+MacdeMacBook-Pro:FoundryPrac mac$ 
+MacdeMacBook-Pro:FoundryPrac mac$ 
+MacdeMacBook-Pro:FoundryPrac mac$ 
+MacdeMacBook-Pro:FoundryPrac mac$ 
+MacdeMacBook-Pro:FoundryPrac mac$ 
+MacdeMacBook-Pro:FoundryPrac mac$ forge test test/nft/NFTMarket.t.sol --mt -vvv
+error: a value is required for '--match-test <REGEX>' but none was supplied
+
+For more information, try '--help'.
+MacdeMacBook-Pro:FoundryPrac mac$ forge test test/nft/NFTMarket.t.sol -vvv
+[⠊] Compiling...
+No files changed, compilation skipped
+
+Ran 14 tests for test/nft/NFTMarket.t.sol:NFTMarketTest
+[PASS] testBuyNFTInsufficientBalance() (gas: 221704)
+[PASS] testBuyNFTSuccess() (gas: 238015)
+[PASS] testBuyNFTTwice() (gas: 227743)
+[PASS] testBuyNFTWithCallbackIncorrectAmount() (gas: 229929)
+[PASS] testBuyNFTWithCallbackSuccess() (gas: 237870)
+[PASS] testBuySelfNFT() (gas: 227549)
+[PASS] testFuzz_ListAndBuyNFT(uint256,address) (runs: 256, μ: 256812, ~: 256981)
+[PASS] testInvariant_NoTokenBalance() (gas: 477763)
+[PASS] testListNFTByApprovedForToken() (gas: 201690)
+[PASS] testListNFTByApprovedOperator() (gas: 197908)
+[PASS] testListNFTFailureNotOwner() (gas: 34354)
+[PASS] testListNFTFailureZeroAddress() (gas: 18133)
+[PASS] testListNFTFailureZeroPrice() (gas: 18304)
+[PASS] testListNFTSuccess() (gas: 171048)
+Suite result: ok. 14 passed; 0 failed; 0 skipped; finished in 66.67ms (72.74ms CPU time)
+
+Ran 1 test suite in 2.26s (66.67ms CPU time): 14 tests passed, 0 failed, 0 skipped (14 total tests)
