@@ -24,7 +24,7 @@ contract MemeToken is ERC20 {
     }
 
     function initialize(
-        string memory symbol,
+        string memory _symbol,
         uint256 _totalSupply,
         uint256 _perMint,
         uint256 _price,
@@ -35,7 +35,7 @@ contract MemeToken is ERC20 {
         require(_perMint > 0 && _price > 0 && _issuer != address(0), "Invalid params");
 
         _tokenName = "Meme Token";
-        _tokenSymbol = symbol;
+        _tokenSymbol = _symbol;
         maxSupply = _totalSupply;
         perMint = _perMint;
         mintPrice = _price;
