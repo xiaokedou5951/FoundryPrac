@@ -1,0 +1,233 @@
+MacdeMacBook-Pro:FoundryPrac mac$ forge script script/upgrade-nft/DeployUpgradeNFT.s.sol   --rpc-url sepolia   --broadcast   --verify   -vvvv
+[⠊] Compiling...
+No files changed, compilation skipped
+Warning: Detected artifacts built from source files that no longer exist. Run `forge clean` to make sure builds are in sync with project files.
+ - /Users/mac/learn/web3/2026/07/FoundryPrac/script/upgrade-nft/DeployNFTMarket.s.sol
+ - /Users/mac/learn/web3/2026/07/FoundryPrac/test/upgrade-nft/mocks/MockERC20.sol
+ - /Users/mac/learn/web3/2026/07/FoundryPrac/test/upgrade-nft/mocks/MockERC721.sol
+ - /Users/mac/learn/web3/2026/07/FoundryPrac/src/upgrade-nft/Interfaces.sol
+ - /Users/mac/learn/web3/2026/07/FoundryPrac/src/upgrade-nft/NFTMarketV2.sol
+ - /Users/mac/learn/web3/2026/07/FoundryPrac/src/upgrade-nft/NFTMarketV1.sol
+ - /Users/mac/learn/web3/2026/07/FoundryPrac/test/upgrade-nft/NFTMarketUpgradeTest.t.sol
+Traces:
+  [3172407] DeployUpgradeNFT::run()
+    ├─ [0] VM::envUint("PRIVATE_KEY") [staticcall]
+    │   └─ ← [Return] <env var value>
+    ├─ [0] VM::addr(<pk>) [staticcall]
+    │   └─ ← [Return] 0xa85A50540fCeb29891a28aB228F47250E935Dc89
+    ├─ [0] VM::startBroadcast(<pk>)
+    │   └─ ← [Return]
+    ├─ [1385794] → new ERC721_Upgrade_V1@0xC32728D444a9a52Cc3222CDDF7ffCC531bfB60b5
+    │   ├─ emit Initialized(version: 18446744073709551615 [1.844e19])
+    │   └─ ← [Return] 6804 bytes of code
+    ├─ [0] console::log("V1 Implementation deployed at:", ERC721_Upgrade_V1: [0xC32728D444a9a52Cc3222CDDF7ffCC531bfB60b5]) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [152296] → new ERC1967Proxy@0xDF394B71Ab69c196c8Db99699adCCB5a65AfD8bD
+    │   ├─ emit Upgraded(implementation: ERC721_Upgrade_V1: [0xC32728D444a9a52Cc3222CDDF7ffCC531bfB60b5])
+    │   ├─ [94920] ERC721_Upgrade_V1::initialize("UpgradeNFT", "UNFT") [delegatecall]
+    │   │   ├─ emit OwnershipTransferred(previousOwner: 0x0000000000000000000000000000000000000000, newOwner: 0xa85A50540fCeb29891a28aB228F47250E935Dc89)
+    │   │   ├─ emit Initialized(version: 1)
+    │   │   └─ ← [Stop]
+    │   └─ ← [Return] 163 bytes of code
+    ├─ [0] console::log("Proxy deployed at:", ERC1967Proxy: [0xDF394B71Ab69c196c8Db99699adCCB5a65AfD8bD]) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [47816] ERC1967Proxy::fallback(0xa85A50540fCeb29891a28aB228F47250E935Dc89, 1)
+    │   ├─ [47432] ERC721_Upgrade_V1::mint(0xa85A50540fCeb29891a28aB228F47250E935Dc89, 1) [delegatecall]
+    │   │   ├─ emit Transfer(from: 0x0000000000000000000000000000000000000000, to: 0xa85A50540fCeb29891a28aB228F47250E935Dc89, tokenId: 1)
+    │   │   └─ ← [Stop]
+    │   └─ ← [Return]
+    ├─ [0] console::log("Minted token 1 to:", 0xa85A50540fCeb29891a28aB228F47250E935Dc89) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [1013] ERC1967Proxy::fallback(1) [staticcall]
+    │   ├─ [629] ERC721_Upgrade_V1::ownerOf(1) [delegatecall]
+    │   │   └─ ← [Return] 0xa85A50540fCeb29891a28aB228F47250E935Dc89
+    │   └─ ← [Return] 0xa85A50540fCeb29891a28aB228F47250E935Dc89
+    ├─ [0] console::log("Owner of token 1:", 0xa85A50540fCeb29891a28aB228F47250E935Dc89) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [1440856] → new ERC721_Upgrade_V2@0xC4296ae3fdf7497301eB4B4D981a413d27102055
+    │   ├─ emit Initialized(version: 18446744073709551615 [1.844e19])
+    │   └─ ← [Return] 7079 bytes of code
+    ├─ [0] console::log("V2 Implementation deployed at:", ERC721_Upgrade_V2: [0xC4296ae3fdf7497301eB4B4D981a413d27102055]) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [28883] ERC1967Proxy::fallback(ERC721_Upgrade_V2: [0xC4296ae3fdf7497301eB4B4D981a413d27102055], 0x5cd8a76b)
+    │   ├─ [28487] ERC721_Upgrade_V1::upgradeToAndCall(ERC721_Upgrade_V2: [0xC4296ae3fdf7497301eB4B4D981a413d27102055], 0x5cd8a76b) [delegatecall]
+    │   │   ├─ [414] ERC721_Upgrade_V2::proxiableUUID() [staticcall]
+    │   │   │   └─ ← [Return] 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc
+    │   │   ├─ emit Upgraded(implementation: ERC721_Upgrade_V2: [0xC4296ae3fdf7497301eB4B4D981a413d27102055])
+    │   │   ├─ [24154] ERC721_Upgrade_V2::initializeV2() [delegatecall]
+    │   │   │   ├─ emit Initialized(version: 2)
+    │   │   │   └─ ← [Stop]
+    │   │   └─ ← [Stop]
+    │   └─ ← [Return]
+    ├─ [0] console::log("Upgraded to V2") [staticcall]
+    │   └─ ← [Stop]
+    ├─ [772] ERC1967Proxy::fallback() [staticcall]
+    │   ├─ [391] ERC721_Upgrade_V2::getVersion() [delegatecall]
+    │   │   └─ ← [Return] 2
+    │   └─ ← [Return] 2
+    ├─ [0] console::log("Version:", 2) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [1035] ERC1967Proxy::fallback(1) [staticcall]
+    │   ├─ [651] ERC721_Upgrade_V2::ownerOf(1) [delegatecall]
+    │   │   └─ ← [Return] 0xa85A50540fCeb29891a28aB228F47250E935Dc89
+    │   └─ ← [Return] 0xa85A50540fCeb29891a28aB228F47250E935Dc89
+    ├─ [0] console::log("Token 1 still owned by deployer:", 0xa85A50540fCeb29891a28aB228F47250E935Dc89) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [0] VM::stopBroadcast()
+    │   └─ ← [Return]
+    └─ ← [Stop]
+
+
+Script ran successfully.
+
+== Logs ==
+  V1 Implementation deployed at: 0xC32728D444a9a52Cc3222CDDF7ffCC531bfB60b5
+  Proxy deployed at: 0xDF394B71Ab69c196c8Db99699adCCB5a65AfD8bD
+  Minted token 1 to: 0xa85A50540fCeb29891a28aB228F47250E935Dc89
+  Owner of token 1: 0xa85A50540fCeb29891a28aB228F47250E935Dc89
+  V2 Implementation deployed at: 0xC4296ae3fdf7497301eB4B4D981a413d27102055
+  Upgraded to V2
+  Version: 2
+  Token 1 still owned by deployer: 0xa85A50540fCeb29891a28aB228F47250E935Dc89
+
+## Setting up 1 EVM.
+==========================
+Simulated On-chain Traces:
+
+  [1385794] → new ERC721_Upgrade_V1@0xC32728D444a9a52Cc3222CDDF7ffCC531bfB60b5
+    ├─ emit Initialized(version: 18446744073709551615 [1.844e19])
+    └─ ← [Return] 6804 bytes of code
+
+  [154796] → new ERC1967Proxy@0xDF394B71Ab69c196c8Db99699adCCB5a65AfD8bD
+    ├─ emit Upgraded(implementation: ERC721_Upgrade_V1: [0xC32728D444a9a52Cc3222CDDF7ffCC531bfB60b5])
+    ├─ [94920] ERC721_Upgrade_V1::initialize("UpgradeNFT", "UNFT") [delegatecall]
+    │   ├─ emit OwnershipTransferred(previousOwner: 0x0000000000000000000000000000000000000000, newOwner: 0xa85A50540fCeb29891a28aB228F47250E935Dc89)
+    │   ├─ emit Initialized(version: 1)
+    │   └─ ← [Stop]
+    └─ ← [Return] 163 bytes of code
+
+  [54316] ERC1967Proxy::fallback(0xa85A50540fCeb29891a28aB228F47250E935Dc89, 1)
+    ├─ [49432] ERC721_Upgrade_V1::mint(0xa85A50540fCeb29891a28aB228F47250E935Dc89, 1) [delegatecall]
+    │   ├─ emit Transfer(from: 0x0000000000000000000000000000000000000000, to: 0xa85A50540fCeb29891a28aB228F47250E935Dc89, tokenId: 1)
+    │   └─ ← [Stop]
+    └─ ← [Return]
+
+  [1440856] → new ERC721_Upgrade_V2@0xC4296ae3fdf7497301eB4B4D981a413d27102055
+    ├─ emit Initialized(version: 18446744073709551615 [1.844e19])
+    └─ ← [Return] 7079 bytes of code
+
+  [45483] ERC1967Proxy::fallback(ERC721_Upgrade_V2: [0xC4296ae3fdf7497301eB4B4D981a413d27102055], 0x5cd8a76b)
+    ├─ [40587] ERC721_Upgrade_V1::upgradeToAndCall(ERC721_Upgrade_V2: [0xC4296ae3fdf7497301eB4B4D981a413d27102055], 0x5cd8a76b) [delegatecall]
+    │   ├─ [414] ERC721_Upgrade_V2::proxiableUUID() [staticcall]
+    │   │   └─ ← [Return] 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc
+    │   ├─ emit Upgraded(implementation: ERC721_Upgrade_V2: [0xC4296ae3fdf7497301eB4B4D981a413d27102055])
+    │   ├─ [28954] ERC721_Upgrade_V2::initializeV2() [delegatecall]
+    │   │   ├─ emit Initialized(version: 2)
+    │   │   └─ ← [Stop]
+    │   └─ ← [Stop]
+    └─ ← [Return]
+
+
+==========================
+
+Chain 11155111
+
+Estimated gas price: 2.105739174 gwei
+
+Estimated total gas used for script: 4603850
+
+Estimated amount required: 0.0096945072962199 ETH
+
+==========================
+
+##### sepolia
+✅  [Success] Hash: 0x82bccb81eb4ee23dfee6516954f8d2b4107b8b7e85d1d60fa8c7a50bf360883a
+Block: 11423497
+Paid: 0.000069392661894045 ETH (67371 gas * 1.030007895 gwei)
+
+
+##### sepolia
+✅  [Success] Hash: 0x09069581bb760b61f6d039ad4220aca5e24b016d1d728ac3457b4916e591cee5
+Contract Address: 0xDF394B71Ab69c196c8Db99699adCCB5a65AfD8bD
+Block: 11423497
+Paid: 0.00023144689403808 ETH (224704 gas * 1.030007895 gwei)
+
+
+##### sepolia
+✅  [Success] Hash: 0x4752fc196d847a48fa7b3c429ee63abd3e066b94abfff4401d7343d4b1703df1
+Contract Address: 0xC32728D444a9a52Cc3222CDDF7ffCC531bfB60b5
+Block: 11423497
+Paid: 0.00159691600034484 ETH (1550392 gas * 1.030007895 gwei)
+
+
+##### sepolia
+✅  [Success] Hash: 0xcde852484639cf62beb700ec8042445cf0057b87ccfb309325b89b5c241f8f2b
+Contract Address: 0xC4296ae3fdf7497301eB4B4D981a413d27102055
+Block: 11423497
+Paid: 0.00165821589020787 ETH (1609906 gas * 1.030007895 gwei)
+
+
+##### sepolia
+✅  [Success] Hash: 0x31226c85d2153c3fc7344f9152f48c28a95ef44a08e14d117d0e46bc7cd9e388
+Block: 11423497
+Paid: 0.00007816523913576 ETH (75888 gas * 1.030007895 gwei)
+
+✅ Sequence #1 on sepolia | Total Paid: 0.003634136685620595 ETH (3528261 gas * avg 1.030007895 gwei)
+                                                                                       
+
+==========================
+
+ONCHAIN EXECUTION COMPLETE & SUCCESSFUL.
+##
+Start verification for (3) contracts
+Start verifying contract `0xC32728D444a9a52Cc3222CDDF7ffCC531bfB60b5` deployed on sepolia
+EVM version: prague
+Compiler version: 0.8.33
+Optimizations:    200
+Error: Failed to verify contract: error sending request for url (https://binaries.soliditylang.org/bin/list.txt); client error (Connect); tls handshake eof
+Start verifying contract `0xDF394B71Ab69c196c8Db99699adCCB5a65AfD8bD` deployed on sepolia
+EVM version: prague
+Compiler version: 0.8.33
+Optimizations:    200
+Constructor args: 000000000000000000000000c32728d444a9a52cc3222cddf7ffcc531bfb60b5000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000c44cd88b7600000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000000a557067726164654e4654000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004554e46540000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+
+Submitting verification for [lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Proxy.sol:ERC1967Proxy] 0xDF394B71Ab69c196c8Db99699adCCB5a65AfD8bD.
+Warning: Could not detect deployment: Unable to locate ContractCode at 0xdf394b71ab69c196c8db99699adccb5a65afd8bd; waiting 5 seconds before trying again (4 tries remaining)
+
+Submitting verification for [lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Proxy.sol:ERC1967Proxy] 0xDF394B71Ab69c196c8Db99699adCCB5a65AfD8bD.
+Submitted contract for verification:
+        Response: `OK`
+        GUID: `yvjydzp9hz1mywsmavnp1quyubtz67a7fgwjh1kbxzdmhlvaiy`
+        URL: https://sepolia.etherscan.io/address/0xdf394b71ab69c196c8db99699adccb5a65afd8bd
+Contract verification status:
+Response: `NOTOK`
+Details: `Pending in queue`
+Warning: Verification is still pending...; waiting 15 seconds before trying again (7 tries remaining)
+Contract verification status:
+Response: `OK`
+Details: `Pass - Verified`
+Contract successfully verified
+Start verifying contract `0xC4296ae3fdf7497301eB4B4D981a413d27102055` deployed on sepolia
+EVM version: prague
+Compiler version: 0.8.33
+Optimizations:    200
+
+Submitting verification for [src/upgrade-nft/ERC721_Upgrade_V2.sol:ERC721_Upgrade_V2] 0xC4296ae3fdf7497301eB4B4D981a413d27102055.
+Submitted contract for verification:
+        Response: `OK`
+        GUID: `j7fpt9cbe37q3bquxsz85almssczf8gif8nussmni7niwgvdwp`
+        URL: https://sepolia.etherscan.io/address/0xc4296ae3fdf7497301eb4b4d981a413d27102055
+Contract verification status:
+Response: `NOTOK`
+Details: `Pending in queue`
+Warning: Verification is still pending...; waiting 15 seconds before trying again (7 tries remaining)
+Contract verification status:
+Response: `OK`
+Details: `Pass - Verified`
+Contract successfully verified
+
+Transactions saved to: /Users/mac/learn/web3/2026/07/FoundryPrac/broadcast/DeployUpgradeNFT.s.sol/11155111/run-latest.json
+
+Sensitive values saved to: /Users/mac/learn/web3/2026/07/FoundryPrac/cache/DeployUpgradeNFT.s.sol/11155111/run-latest.json
+
+Error: Not all (2 / 3) contracts were verified!

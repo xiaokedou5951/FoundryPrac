@@ -1,0 +1,10 @@
+MacdeMacBook-Pro:FoundryPrac mac$ forge verify-contract 0xC32728D444a9a52Cc3222CDDF7ffCC531bfB60b5 \
+>   src/upgrade-nft/ERC721_Upgrade_V1.sol:ERC721_Upgrade_V1 \
+>   --chain sepolia
+Start verifying contract `0xC32728D444a9a52Cc3222CDDF7ffCC531bfB60b5` deployed on sepolia
+
+Submitting verification for [src/upgrade-nft/ERC721_Upgrade_V1.sol:ERC721_Upgrade_V1] 0xC32728D444a9a52Cc3222CDDF7ffCC531bfB60b5.
+Submitted contract for verification:
+        Response: `OK`
+        GUID: `ke1jrlx45bgmtbirqujvqhdhxgzhwh9xuxnkswry6uf7astcaz`
+        URL: https://sepolia.etherscan.io/address/0xc32728d444a9a52cc3222cddf7ffcc531bfb60b5
