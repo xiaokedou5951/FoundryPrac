@@ -1,0 +1,26 @@
+编写一个 Vesting 合约（可参考 OpenZepplin Vesting 相关合约）， 相关的参数有：
+
+beneficiary： 受益人
+锁定的 ERC20 地址
+Cliff：12 个月
+线性释放：接下来的 24 个月，从 第 13 个月起开始每月解锁 1/24 的 ERC20
+Vesting 合约包含的方法 release() 用来释放当前解锁的 ERC20 给受益人，Vesting 合约部署后，开始计算 Cliff ，并转入 100 万 ERC20 资产。
+
+要求在 Foundry 包含时间模拟测试
+
+
+---------------------------
+Vesting 合约（代币归属合约 / Token Vesting Contract）是 Web3 里一种按预设时间或条件，
+逐步把代币发放给受益人（团队、投资人、顾问等）的智能合约。
+它本质是"代码化的托管 + 自动释放器"，用来防止早期持币人一次性砸盘，把"纸面分配"变成"链上可验证的逐期解锁"。
+
+核心机制
+
+一份典型 vesting 合约部署时锁定这些参数：
+beneficiary：受益人地址
+total allocation：总归属量
+start（通常是 TGE 时间）
+cliff：悬崖期，这段时间内 0 可领
+duration：总归属时长
+release cadence：线性（按秒/月）还是分段（按月/季度）
+受益人不能拿全部，只能调 release() 领"已归属但未领取"的部分；未归属的永远锁在合约里。常用公式：vested = total × (now - start) / duration，cliff 前分子视为 0。
