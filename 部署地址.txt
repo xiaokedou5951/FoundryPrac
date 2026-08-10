@@ -1,0 +1,3 @@
+sepolia:
+    mytoken: 0x86e03d015bFB9E9af17E76667FBf659bFfbD81F5
+    tokenbank: 0x326343DAE5586944d0429b4d5FC74d0888De851d

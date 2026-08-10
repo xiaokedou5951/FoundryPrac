@@ -1,3 +1,4 @@
+MacdeMacBook-Pro:FoundryPrac mac$ export PRIVATE_KEY=0x真实地址
 MacdeMacBook-Pro:FoundryPrac mac$ forge script script/upgrade-nft/DeployUpgradeNFT.s.sol   --rpc-url sepolia   --broadcast   --verify   -vvvv
 [⠊] Compiling...
 No files changed, compilation skipped
