@@ -8,6 +8,8 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 // fork from https://github.com/monokh/looneyswap
 // https://monokh.com/posts/uniswap-from-scratch
 
+// Uniswap V2 AMM 池子
+
 // Tom：1  MSP
 // Bob: 2 MSP
 // Alice: 3 MSP
