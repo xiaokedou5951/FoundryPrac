@@ -108,6 +108,34 @@ amountBOut = amountIn * 997 * reserveOut / (reserveIn * 1000 + amountIn * 997);
 amountRepay = reserveA_TokenB * amountIn * 1000 / ((reserveA_TokenA - amountIn) * 997) + 1;
 ```
 
+## 为什么不用 v2-periphery
+
+本模块只依赖 v2-core，未引入 v2-periphery（Router02 等），原因如下：
+
+**1. 需要的能力 v2-core 全部具备**
+
+| 操作 | v2-core 直接实现 | periphery 提供的替代 |
+|------|-----------------|---------------------|
+| 创建池 | `factory.createPair()` | Router 转发调用 |
+| 加流动性 | `transfer` + `pair.mint()` | `Router.addLiquidity()` |
+| 闪电兑换 | `pair.swap(..., data)` + `uniswapV2Call` | 无（官方 ExampleFlashSwap 也只依赖 Pair） |
+
+闪电兑换机制本身完全实现在 v2-core 的 Pair 中（`swap` 先发货 → 回调 → 再校验 K 值），与 periphery 无关。
+
+**2. Router 的核心价值在本场景用不上**
+
+Router 主要解决 WETH 兑换、多跳路由、滑点/截止时间保护、按比例计算加池数量。本场景两池均由部署者自己按固定比例（1:1 / 1:2）注入流动性以故意制造价差，无滑点保护需求；代币为纯 ERC20，不涉及 ETH。
+
+**3. 编译器版本负担**
+
+v2-core 为 Solidity 0.5.16，v2-periphery 为 0.6.6 —— 引入 periphery 意味着额外管理一个旧版 solc，跨版本编译复杂度翻倍。
+
+**4. 依赖最小化**
+
+少一个 git submodule，安装、CI 与审计面都更小。
+
+> 若后续需要真实 ETH 交易对、多路径套利（A→B→C）或让他人通过 Router 加流动性，则应引入 `UniswapV2Router02`。
+
 ## 注意事项
 
 - **data 必须非空**：V2 Pair 仅在 `data.length > 0` 时才触发 `uniswapV2Call` 回调，`startArbitrage` 中传入 `abi.encode(msg.sender)`，否则回调不会执行、Pair 会因收不到还款 revert `INSUFFICIENT_INPUT_AMOUNT`
