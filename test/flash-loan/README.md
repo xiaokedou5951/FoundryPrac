@@ -175,11 +175,97 @@ totalDebt = amount + (amount * 5 / 10000);  // 0.05% premium
 
 ### 1. Uniswap V2 init code hash 不匹配
 
-`UniswapV2Library.pairFor`（在 v2-periphery 中）硬编码了主网上线时官方 v2-core Pair 的 initcode hash `0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f`。但本地 forge 编译 v2-core 0.5.16 Pair 的 initcode hash 不同（不同 solc 配置/optimizer/metadata），导致 `Router.addLiquidity` 内部 `getReserves` 用的 pairFor 地址与 Factory.createPair 实际部署的 Pair 地址错位，报 `call to non-contract address`。
+#### 问题现象
 
-**解决**：将 [lib/v2-periphery/contracts/libraries/UniswapV2Library.sol](../../lib/v2-periphery/contracts/libraries/UniswapV2Library.sol) 中的硬编码 hash 替换为本地编译产物计算的 hash `0x2d53f8ada688437d62471edc172514a1e124654169caa2657976eda0c3b8712c`（用 `cast keccak $(jq -r '.bytecode.object' out/UniswapV2Pair.sol/UniswapV2Pair.json)` 算出）。已在源码处加注释说明。
+`Router.addLiquidity` 调用时 revert：
 
-> 如改用主网 fork 上的真实 Uniswap（不本地部署 Factory），则需还原为官方 hash。
+```
+call to non-contract address 0x0b9232EFD764a966FA96C48cB69F4Ab21af16C25
+```
+
+`createPair` 成功部署 Pair 到地址 `0x711F229f...`（8833 bytes code），但 Router 内部 `getReserves` 调用的 Pair 地址是另一个 `0x0b9232EF...`（无代码）。
+
+#### 根本原因
+
+`UniswapV2Library.pairFor`（在 v2-periphery 中）用 CREATE2 公式在 **不调用合约** 的情况下推算 Pair 地址：
+
+```solidity
+pair = address(uint(keccak256(abi.encodePacked(
+    hex'ff',
+    factory,
+    keccak256(abi.encodePacked(token0, token1)),
+    INIT_CODE_HASH   // ← 硬编码常量
+))));
+```
+
+`INIT_CODE_HASH` 必须等于 `keccak256(type(UniswapV2Pair).creationCode)`。v2-periphery 在仓库中硬编码了主网上线时官方 v2-core 编译产物的 hash，但**本地 forge 编译同一份 v2-core 源码得到的 initcode hash 不同**，原因：
+
+- 不同 solc 版本/补丁号（即使同为 0.5.16，编译器二进制可能略有差异）
+- 项目级 `foundry.toml` 的 `optimizer` / `optimizer_runs` 设置与官方 v2-core 配置不一致
+- metadata hash（含编译器版本、settings、源码哈希）写入 initcode 末尾，任何差异都会改变最终 hash
+
+#### 修改详情
+
+**修改文件**：[`lib/v2-periphery/contracts/libraries/UniswapV2Library.sol`](../../lib/v2-periphery/contracts/libraries/UniswapV2Library.sol) 第 24 行
+
+**修改前**（官方原值，主网上线时 v2-core 0.5.16 编译产物）：
+
+```solidity
+hex'96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f' // init code hash
+```
+
+**修改后**（本地 forge 编译 v2-core 0.5.16 Pair initcode 的 keccak256）：
+
+```solidity
+hex'2d53f8ada688437d62471edc172514a1e124654169caa2657976eda0c3b8712c' // init code hash (本地 forge 编译 v2-core 0.5.16 的 Pair initcode hash，与官方主网部署的 0x96e8ac... 不同；本测试使用本地编译产物，故替换之)
+```
+
+#### 如何重新计算（复现修改步骤）
+
+修改 `foundry.toml`（调整 optimizer、添加 solc 版本等）后，本地编译产物的 initcode hash 会变，需重新计算并更新：
+
+```bash
+# 1. 重新编译，确保 out/UniswapV2Pair.sol/UniswapV2Pair.json 是最新产物
+forge build
+
+# 2. 从 artifact 取出 Pair 的部署 bytecode（即 initcode，Pair 构造函数无参数）
+#    用 jq 提取 .bytecode.object（不含 0x 前缀的纯 hex 字符串）
+#    用 cast keccak 计算 keccak256
+cast keccak $(jq -r '.bytecode.object' out/UniswapV2Pair.sol/UniswapV2Pair.json)
+# → 0x2d53f8ada688437d62471edc172514a1e124654169caa2657976eda0c3b8712c
+
+# 3. 把上述 hash（去掉 0x 前缀，用 hex'...' 包裹）替换 UniswapV2Library.sol 第 24 行
+```
+
+#### 验证修改生效
+
+修改后跑测试，正常路径不再出现 `call to non-contract address`，且套利成功执行：
+
+```bash
+forge test --match-path "test/flash-loan/FlashLoanArbitrage.t.sol" -vv 2>&1 | grep -E "(PASS|FAIL|Profit)"
+# 预期：2 passed; Profit WETH: 27127509642147984829
+```
+
+#### 影响范围与还原
+
+| 范围 | 影响 |
+|------|------|
+| 本模块（`src/flash-loan/`、`test/flash-loan/`、`script/flash-loan/`） | 依赖此 hash 的 `Router02.addLiquidity` / `getAmountsOut` / `swapExactTokensForTokens` 全部正常 |
+| 项目内其他模块 | 不影响（其他模块不使用 v2-periphery Router02） |
+| 子模块提交 | `lib/v2-periphery/` 是 git submodule，本修改留在工作区，不会污染上游仓库 |
+
+**何时需还原为官方值 `0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f`**：
+
+- 改用主网 fork 上**已部署的真实 Uniswap V2 Factory**（地址 `0x5C69bEE701ef873E83BC5b7E5Af6b8E0aFC9...`）而非本地 `forge create` 部署的 Factory 时
+- 部署到主网/测试网并使用主网原生 Uniswap 流动性时
+
+**还原命令**：
+
+```bash
+cd lib/v2-periphery && git checkout contracts/libraries/UniswapV2Library.sol
+```
+
+> 注：`forge build` 编译 v2-core 与官方上线时配置不同，hash 必然不同；这是预期行为，不算 bug。修改 init code hash 是 Foundry 本地部署 Uniswap V2 的标准做法（与官方文档建议一致）。
 
 ### 2. 跨版本编译部署
 
