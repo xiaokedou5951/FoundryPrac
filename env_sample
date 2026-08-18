@@ -1,5 +1,6 @@
 ETHERSCAN_API_KEY=
 LOCAL_URL="http://127.0.0.1:8545"
 SEPOLIA_RPC_URL="https://ethereum-sepolia-rpc.publicnode.com"
+MAINNET_RPC_URL="https://ethereum-rpc.publicnode.com"
 MNEMONIC="test test test test test test test test test test test junk"
 TOKEN_ADDRESS=0x86e03d015bFB9E9af17E76667FBf659bFfbD81F5
